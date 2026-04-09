@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PuttingMaster Challenge</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Montserrat', sans-serif; }
-        .putt-box { transition: all 0.1s ease; touch-action: manipulation; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            -webkit-text-size-adjust: 100%;
+        }
+        .putt-box { 
+            transition: all 0.1s ease; 
+            touch-action: manipulation; 
+        }
         * { -webkit-tap-highlight-color: transparent; }
         
         /* Brand Colors */
@@ -16,9 +22,19 @@
         .bg-brand-red { background-color: #D40610; }
         .border-brand-red { border-color: #D40610; }
         
-        /* Scoring and UI Gray */
-        .text-scoring-gray { color: #F2F2F2; }
-        .border-scoring-gray { border-color: #F2F2F2; }
+        /* Italic Slant Fix */
+        .italic-slant-fix {
+            padding-right: 0.2em;
+            margin-right: -0.2em;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            .putt-box {
+                width: 1.6rem;
+                height: 1.6rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-20 select-none">
@@ -26,17 +42,19 @@
     <div class="max-w-xl mx-auto p-4">
         <header class="flex justify-between items-start mb-10 pt-6">
             <div class="flex flex-col gap-2">
-                <img src="Logo Horizonat Negative Trademark.png" alt="PuttingMaster Logo" class="h-12 w-auto object-contain self-start">
+                <img src="Logo%20Horizonat%20Negative%20Trademark.png" 
+                     alt="PuttingMaster Logo" 
+                     class="h-12 w-auto object-contain self-start">
                 <p class="text-brand-red text-[16px] uppercase tracking-[0.4em] font-bold ml-1">CHALLENGE</p>
             </div>
-            <button onclick="resetScoresOnly()" class="bg-slate-800 text-[#F2F2F2] text-[9px] px-3 py-1 rounded-full uppercase font-bold border border-slate-700 mt-2">Reset Scores</button>
+            <button onclick="resetScoresOnly()" class="bg-slate-800 text-[#F2F2F2] text-[9px] px-3 py-2 rounded-full uppercase font-bold border border-slate-700 mt-2 active:bg-slate-700 transition-colors">Reset Scores</button>
         </header>
 
-        <div class="flex gap-2 mb-10 bg-slate-900/50 p-2 rounded-2xl border border-slate-800 shadow-inner">
+        <div class="flex flex-col sm:flex-row gap-2 mb-10 bg-slate-900/50 p-2 rounded-2xl border border-slate-800 shadow-inner">
             <input id="playerName" type="text" placeholder="PLAYER NAME..." 
                 onkeydown="if(event.key === 'Enter') addPlayer()"
                 class="flex-grow p-4 rounded-xl bg-slate-800 border-none text-white focus:ring-2 focus:ring-brand-red outline-none font-bold placeholder:text-slate-700 uppercase">
-            <button onclick="addPlayer()" class="bg-brand-red hover:brightness-110 px-8 rounded-xl font-black text-white transition-all active:scale-95 text-2xl shadow-lg">ADD</button>
+            <button onclick="addPlayer()" class="bg-brand-red hover:brightness-110 px-8 py-4 sm:py-0 rounded-xl font-black text-white transition-all active:scale-95 text-xl shadow-lg">ADD</button>
         </div>
 
         <div id="playersList" class="space-y-12"></div>
@@ -105,80 +123,79 @@
                 let jGrandTotal = 0;
                 let rGrandTotal = 0;
 
-                let tableRows = '';
+                let holeRows = '';
                 for(let i=0; i<5; i++) {
                     const hJCount = player.j316[i].filter(s => s === 1).length;
                     const hRCount = player.reg[i].filter(s => s === 1).length;
                     jGrandTotal += hJCount;
                     rGrandTotal += hRCount;
 
-                    tableRows += `
-                        <tr class="border-t border-slate-800/50">
-                            <td class="py-5 px-3 text-[12px] font-black text-[#F2F2F2] uppercase italic">${i+1}</td>
-                            <td class="p-2">
-                                <div class="flex gap-1 justify-center">
-                                    ${player.j316[i].map((state, pIdx) => `
-                                        <div onclick="togglePutt(${player.id}, 'j316', ${i}, ${pIdx})" 
-                                             class="putt-box w-8 h-8 rounded-md border-2 ${state === 1 ? 'bg-green-500 border-green-400' : 'bg-red-500/10 border-red-500/20'}">
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </td>
-                            <td class="p-2 text-center">
-                                <span class="text-[#F2F2F2] font-black text-xl">${hJCount}</span>
-                            </td>
-                            <td class="p-2 border-l border-slate-800">
-                                <div class="flex gap-1 justify-center">
-                                    ${player.reg[i].map((state, pIdx) => `
-                                        <div onclick="togglePutt(${player.id}, 'reg', ${i}, ${pIdx})" 
-                                             class="putt-box w-8 h-8 rounded-md border-2 ${state === 1 ? 'bg-green-500 border-green-400' : 'bg-slate-800/20 border-slate-700/40'}">
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </td>
-                            <td class="p-2 text-center">
-                                <span class="text-[#F2F2F2] font-black text-xl">${hRCount}</span>
-                            </td>
-                        </tr>
+                    holeRows += `
+                        <div class="grid grid-cols-12 items-center border-t border-slate-800/50 py-4 px-1">
+                            <div class="col-span-1 text-[10px] font-black text-slate-500 italic uppercase ml-1">${i+1}</div>
+                            
+                            <div class="col-span-4 flex gap-1 justify-center">
+                                ${player.j316[i].map((state, pIdx) => `
+                                    <div onclick="togglePutt(${player.id}, 'j316', ${i}, ${pIdx})" 
+                                         class="putt-box w-7 h-7 sm:w-8 sm:h-8 rounded-md border-2 ${state === 1 ? 'bg-green-500 border-green-400 shadow-[0_0_10px_rgba(34,197,94,0.3)]' : 'bg-red-500/10 border-red-500/20'}">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="col-span-1 text-center font-black text-xl text-white italic">${hJCount}</div>
+                            
+                            <div class="col-span-1 border-l border-slate-800 h-6 mx-auto"></div>
+
+                            <div class="col-span-4 flex gap-1 justify-center">
+                                ${player.reg[i].map((state, pIdx) => `
+                                    <div onclick="togglePutt(${player.id}, 'reg', ${i}, ${pIdx})" 
+                                         class="putt-box w-7 h-7 sm:w-8 sm:h-8 rounded-md border-2 ${state === 1 ? 'bg-green-500 border-green-400 shadow-[0_0_10px_rgba(34,197,94,0.3)]' : 'bg-slate-800/40 border-slate-700/60'}">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="col-span-1 text-center font-black text-xl text-white italic">${hRCount}</div>
+                        </div>
                     `;
                 }
 
                 const card = document.createElement('div');
                 card.className = "bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden";
                 card.innerHTML = `
-                    <div class="bg-slate-800/40 p-5 flex justify-between items-center border-b border-slate-700">
-                        <h2 class="text-2xl font-black text-white italic tracking-tight uppercase">${player.name}</h2>
-                        <button onclick="editName(${player.id})" class="bg-brand-red hover:brightness-110 text-white text-[9px] px-3 py-1 rounded font-bold uppercase tracking-widest">Edit</button>
+                    <div class="bg-slate-800/40 p-5 flex justify-between items-center border-b border-slate-700 overflow-visible">
+                        <div class="overflow-visible flex-grow">
+                            <h2 class="text-2xl font-black text-white italic tracking-tight uppercase italic-slant-fix">${player.name}</h2>
+                        </div>
+                        <button onclick="editName(${player.id})" class="bg-brand-red hover:brightness-110 text-white text-[9px] px-3 py-1.5 rounded font-bold uppercase tracking-widest transition-all active:scale-95 shrink-0 ml-4">Edit</button>
                     </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="text-[8px] font-black uppercase tracking-widest text-[#F2F2F2] text-center">
-                                <th class="p-2 text-left opacity-50">#</th>
-                                <th class="p-2">J316</th>
-                                <th class="p-2">Total</th>
-                                <th class="p-2 border-l border-slate-800">Regulation</th>
-                                <th class="p-2">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                        <tfoot class="bg-slate-800/50 border-t-2 border-slate-700 text-center">
-                            <tr>
-                                <td class="p-4 text-[9px] font-black text-[#F2F2F2] uppercase leading-none text-left">Round<br>Totals</td>
-                                <td colspan="2" class="p-4 font-black text-[#F2F2F2] text-3xl border-r border-slate-800">
-                                    <span class="text-[8px] block text-[#F2F2F2] opacity-50 mb-1 tracking-widest">J316</span>${jGrandTotal}
-                                </td>
-                                <td colspan="2" class="p-4 font-black text-[#F2F2F2] text-3xl">
-                                     <span class="text-[8px] block text-[#F2F2F2] opacity-50 mb-1 tracking-widest">REG</span>${rGrandTotal}
-                                </td>
-                            </tr>
-                            <tr class="bg-brand-red border-t border-red-400">
-                                <td colspan="5" class="py-6 px-4">
-                                    <div class="text-[10px] font-black text-white uppercase tracking-[0.5em] mb-1">Combined Score</div>
-                                    <div class="font-black text-white text-6xl italic leading-none">${jGrandTotal + rGrandTotal}</div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    
+                    <div class="w-full">
+                        <div class="grid grid-cols-12 text-[8px] font-black uppercase tracking-widest text-slate-500 py-3 text-center">
+                            <div class="col-span-1 px-2">#</div>
+                            <div class="col-span-4">J316</div>
+                            <div class="col-span-1">TOT</div>
+                            <div class="col-span-1"></div>
+                            <div class="col-span-4 uppercase">Regulation</div>
+                            <div class="col-span-1">TOT</div>
+                        </div>
+                        
+                        <div>${holeRows}</div>
+                        
+                        <div class="bg-slate-800/50 border-t-2 border-slate-700">
+                            <div class="flex divide-x divide-slate-800">
+                                <div class="flex-1 p-5 text-center">
+                                    <span class="text-[8px] block text-slate-500 uppercase font-black tracking-widest mb-1">J316 Total</span>
+                                    <span class="text-4xl font-black text-white italic italic-slant-fix">${jGrandTotal}</span>
+                                </div>
+                                <div class="flex-1 p-5 text-center">
+                                    <span class="text-[8px] block text-slate-500 uppercase font-black tracking-widest mb-1">REG Total</span>
+                                    <span class="text-4xl font-black text-white italic italic-slant-fix">${rGrandTotal}</span>
+                                </div>
+                            </div>
+                            <div class="bg-brand-red p-8 text-center shadow-[inset_0_2px_15px_rgba(0,0,0,0.4)]">
+                                <div class="text-[10px] font-black text-white uppercase tracking-[0.5em] mb-2 opacity-90">Combined Score</div>
+                                <div class="font-black text-white text-7xl italic leading-none italic-slant-fix">${jGrandTotal + rGrandTotal}</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(card);
             });
